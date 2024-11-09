@@ -2,6 +2,8 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 import ast
+from datetime import datetime, timezone, timedelta
+import pytz
 
 def plot_data():
     df = pd.read_csv("data/iphone_prices.csv")
@@ -17,6 +19,12 @@ def plot_data():
     plt.title("iPhone Price Distribution in Sri Lanka")
     plt.xlabel("iPhone Model")
     plt.ylabel("Price (LKR)")
+    
+    # Add current running time to the plot with Colombo, Sri Lanka time zone
+    colombo_tz = pytz.timezone('Asia/Colombo')
+    current_time = datetime.now(colombo_tz).strftime('%Y-%m-%d %H:%M:%S %z')
+    plt.figtext(0.99, 0.01, f'Last update: {current_time}', horizontalalignment='right')
+    
     plt.tight_layout()
     plt.savefig("data/iphone_price_distribution.png")
     # plt.show()
