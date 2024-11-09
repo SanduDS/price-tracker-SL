@@ -1,0 +1,55 @@
+name: Run Scraper, Analysis, and Visualization
+
+on:
+  schedule:
+    - cron: '0 * * * *' # Runs every hour
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    # Checkout the repository
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    # Set up Python environment
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.x'
+
+    # Install dependencies from requirements.txt
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+
+    # Run the scraper script
+    - name: Run scraper
+      run: |
+        python scraper.py
+
+    # Run the analysis script
+    - name: Run analysis
+      run: |
+        python analysis.py
+
+    # Run the visualization script
+    - name: Run visualization
+      run: |
+        python visualization.py
+
+    # Commit and push the generated visualization
+    - name: Commit and push changes
+      run: |
+        git config --global user.name 'github-actions[bot]'
+        git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+        git add data/iphone_price_distribution.png
+        git commit -m 'Update iPhone price distribution plot'
+        git push
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
